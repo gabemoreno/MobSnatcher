@@ -1,5 +1,6 @@
 package me.gerpaderp.mobsnatcher;
 
+import me.gerpaderp.mobsnatcher.listeners.ProjectileHitListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -17,15 +18,16 @@ import java.util.stream.Collectors;
 
 public final class MobSnatcher extends JavaPlugin {
 
-    private static MobSnatcher instance;
-    NamespacedKey mobSnatcherKey = new NamespacedKey(MobSnatcher.getInstance(), "egg");
+    //private static MobSnatcher instance;
+    //NamespacedKey mobSnatcherKey = new NamespacedKey(MobSnatcher.getInstance(), "egg");
 
     @Override
     public void onEnable() {
+        Bukkit.getPluginManager().registerEvents(new ProjectileHitListener(), this);
         // Plugin startup logic
-        instance = this;
+        //instance = this;
 
-        ItemStack item = new ItemStack(Material.EGG);
+       /* ItemStack item = new ItemStack(Material.EGG);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName("§6Mob Snatcher");
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -39,7 +41,7 @@ public final class MobSnatcher extends JavaPlugin {
         eggRecipe.setIngredient('R', Material.REDSTONE);
         eggRecipe.setIngredient('E', Material.EGG);
 
-        Bukkit.addRecipe(eggRecipe);
+        Bukkit.addRecipe(eggRecipe);*/
 
 
     }
@@ -49,9 +51,11 @@ public final class MobSnatcher extends JavaPlugin {
         // Plugin shutdown logic
     }
 
-    public static MobSnatcher getInstance() {
+    /*public static MobSnatcher getInstance() {
         return instance;
     }
 
     Set<Material> spawnEggs = Arrays.stream(Material.values()).filter(material -> material.name().endsWith("_SPAWN_EGG")).collect(Collectors.toSet());
+    */
+
 }

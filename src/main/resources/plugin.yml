@@ -1,6 +1,6 @@
 name: MobSnatcher
 version: '${project.version}'
 main: me.gerpaderp.mobsnatcher.MobSnatcher
-api-version: 1.20
+api-version: 1.16
 authors: [ Gerpaderp ]
 description: Capture mobs in spawn eggs!
