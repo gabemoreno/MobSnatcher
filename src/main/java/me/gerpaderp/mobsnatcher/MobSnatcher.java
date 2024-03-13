@@ -21,9 +21,16 @@ public final class MobSnatcher extends JavaPlugin {
     //private static MobSnatcher instance;
     //NamespacedKey mobSnatcherKey = new NamespacedKey(MobSnatcher.getInstance(), "egg");
 
+    private static MobSnatcher instance;
+
+    public static MobSnatcher getInstance() {
+        return instance;
+    }
+
     @Override
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(new ProjectileHitListener(), this);
+        instance = this;
         // Plugin startup logic
         //instance = this;
 

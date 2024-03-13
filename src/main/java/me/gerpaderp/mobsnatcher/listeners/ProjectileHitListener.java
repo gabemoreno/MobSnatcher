@@ -1,63 +1,86 @@
 package me.gerpaderp.mobsnatcher.listeners;
 
+import me.gerpaderp.mobsnatcher.MobSnatcher;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.Egg;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class ProjectileHitListener implements Listener {
 
 
     @EventHandler
-    public void onEggHit(ProjectileHitEvent event) {
+    public void onProjectileHit(ProjectileHitEvent event) {
 
         //if (event.isCancelled()) return;
-        if (!(event.getEntity() instanceof Egg)) return;
 
-        Egg egg = (Egg) event.getEntity();
+        //verify projectile is a snatcher
+        if (!isMobSnatcher(event.getEntity())) return;
+        Projectile snatcher = event.getEntity();
 
-        if (!(egg.getShooter() instanceof Player)) return;
+        //verify shooter is a player
+        if (!(snatcher.getShooter() instanceof Player)) return;
+        Player player = (Player) snatcher.getShooter();
 
-        Player player = (Player) egg.getShooter();
-
+        //verify target is living
         if (!(event.getHitEntity() instanceof LivingEntity)) return;
-
         LivingEntity hitEntity = (LivingEntity) event.getHitEntity();
 
-        snatchMob(player, hitEntity);
-        egg.remove();
-        
+        //verify target has a spawn egg
+        EntityType entityType = hitEntity.getType();
+        Material spawnEggMaterial = Material.matchMaterial(entityType.name() + "_SPAWN_EGG");
+        if (spawnEggMaterial == null) return;
+
+        //verify player is allowed to snatch this mob
+        if (!canSnatch(player, hitEntity)) return;
+
+        //successful snatch logic
+        ItemStack spawnEggItem = new ItemStack(spawnEggMaterial, 1);
+        World snatchWorld = hitEntity.getWorld();
+        Location snatchLocation = hitEntity.getLocation();
+        hitEntity.remove();
+        snatchWorld.dropItemNaturally(snatchLocation, spawnEggItem);
+        snatcher.remove();
+
+
     }
 
-    public void snatchMob(Player player, LivingEntity livingEntity) {
+    //make logic
+    public boolean canSnatch(Player player, LivingEntity livingEntity) {
 
-        EntityType entityType = livingEntity.getType();
-        Material spawnEggMaterial = Material.matchMaterial(entityType.name() + "_SPAWN_EGG");
+        FileConfiguration config = MobSnatcher.getInstance().getConfig();
 
-        if (spawnEggMaterial == null) {
-            //spawn egg doesn't exist for this mob type
-            return;
-        }
+        //verify world is not disabled
+        List<String> disabledWorlds = config.getStringList("disabled-worlds");
+        if (disabledWorlds.contains(livingEntity.getWorld().getName())) return false;
 
-        //check for player permission to catch mobs
-        //check if mob is valid for this version
+        //verify mob is not disabled
+        List<String> disabledMobs = config.getStringList("disabled-mobs");
+        if (disabledMobs.contains(livingEntity.getType().name())) return false;
 
-        ItemStack spawnEggItem = new ItemStack(spawnEggMaterial, 1);
+        //verify player has permission
+        if (!player.hasPermission("mobsnatcher.snatch")) return false;
 
-        World mobWorld = livingEntity.getWorld();
-        Location mobLocation = livingEntity.getLocation();
+        return true;
+    }
 
-        livingEntity.remove();
+    //make logic
+    public boolean isMobSnatcher(ItemStack itemStack) {
+        return true;
+    }
 
-        mobWorld.dropItemNaturally(mobLocation, spawnEggItem);
-        //successfully caught
+    //make logic
+    public boolean isMobSnatcher(Projectile projectile) {
+        if (!(projectile.getType() == EntityType.EGG)) return false;
+        //check persistent data
+        return true;
     }
 
 }
