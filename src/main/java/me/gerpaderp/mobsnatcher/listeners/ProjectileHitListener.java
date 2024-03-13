@@ -1,9 +1,7 @@
 package me.gerpaderp.mobsnatcher.listeners;
 
 import me.gerpaderp.mobsnatcher.MobSnatcher;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -45,14 +43,15 @@ public class ProjectileHitListener implements Listener {
         ItemStack spawnEggItem = new ItemStack(spawnEggMaterial, 1);
         World snatchWorld = hitEntity.getWorld();
         Location snatchLocation = hitEntity.getLocation();
+        snatcher.remove();
         hitEntity.remove();
         snatchWorld.dropItemNaturally(snatchLocation, spawnEggItem);
-        snatcher.remove();
 
-
+        //display snatch effects
+        snatchWorld.playSound(snatchLocation, Sound.ENTITY_CHICKEN_EGG, 1, 1);
+        snatchWorld.spawnParticle(Particle.CLOUD, snatchLocation.add(0, 1, 0), 1, 0, 0, 0, 0);
     }
 
-    //make logic
     public boolean canSnatch(Player player, LivingEntity livingEntity) {
 
         FileConfiguration config = MobSnatcher.getInstance().getConfig();
@@ -68,11 +67,14 @@ public class ProjectileHitListener implements Listener {
         //verify player has permission
         if (!player.hasPermission("mobsnatcher.snatch")) return false;
 
+        //verify isn't tamed by another player
+
         return true;
     }
 
     //make logic
     public boolean isMobSnatcher(ItemStack itemStack) {
+        //check persistent data
         return true;
     }
 

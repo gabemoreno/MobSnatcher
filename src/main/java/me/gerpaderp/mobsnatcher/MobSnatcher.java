@@ -29,7 +29,7 @@ public final class MobSnatcher extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Bukkit.getPluginManager().registerEvents(new ProjectileHitListener(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new ProjectileHitListener(), this);
         instance = this;
         // Plugin startup logic
         //instance = this;
