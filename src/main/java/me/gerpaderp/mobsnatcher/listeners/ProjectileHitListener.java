@@ -18,7 +18,7 @@ public class ProjectileHitListener implements Listener {
     @EventHandler
     public void onEggHit(ProjectileHitEvent event) {
 
-        if (event.isCancelled()) return;
+        //if (event.isCancelled()) return;
         if (!(event.getEntity() instanceof Egg)) return;
 
         Egg egg = (Egg) event.getEntity();
@@ -32,6 +32,8 @@ public class ProjectileHitListener implements Listener {
         LivingEntity hitEntity = (LivingEntity) event.getHitEntity();
 
         snatchMob(player, hitEntity);
+        egg.remove();
+        
     }
 
     public void snatchMob(Player player, LivingEntity livingEntity) {

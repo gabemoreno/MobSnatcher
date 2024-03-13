@@ -4,3 +4,6 @@
 
 #RECIPE
 
+disabled-worlds:
+  - world_the_end
+  - world_the_nether
